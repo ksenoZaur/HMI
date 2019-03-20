@@ -14,11 +14,13 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+
         Main.primary = primaryStage;
         Parent root = FXMLLoader.load(getClass().getResource("lab3HMI.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setTitle("Форма ОП-13");
+        primaryStage.setScene(new Scene(root, 700, 400));
         primaryStage.show();
+
     }
 
 

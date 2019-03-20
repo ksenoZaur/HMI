@@ -42,7 +42,7 @@
                                  </columnResizePolicy>
                               </TableView>
                               <Button fx:id="addLine" mnemonicParsing="false" onAction="#addLineAction" prefHeight="25.0" prefWidth="201.0" text="Добавить пустую строку" AnchorPane.bottomAnchor="6.0" />
-                              <Hyperlink layoutX="1260.0" layoutY="397.0" text="Сохранить">
+                              <Hyperlink fx:id="link" layoutX="1260.0" layoutY="397.0" onAction="#linkAction" text="Сохранить">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -69,14 +69,14 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <TextField layoutX="171.0" layoutY="61.0" prefHeight="25.0" prefWidth="81.0" />
+                              <TextField fx:id="priceField1" layoutX="171.0" layoutY="61.0" prefHeight="25.0" prefWidth="81.0" />
                               <Separator layoutX="24.0" layoutY="100.0" prefHeight="2.0" prefWidth="269.0" />
                               <Label layoutX="24.0" layoutY="103.0" prefHeight="53.0" prefWidth="277.0" text="Продано блюд, в которые включена стоимость соли, по                         руб." textAlignment="JUSTIFY" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <TextField layoutX="154.0" layoutY="130.0" prefHeight="25.0" prefWidth="81.0" />
+                              <TextField fx:id="priceField2" layoutX="154.0" layoutY="130.0" prefHeight="25.0" prefWidth="81.0" />
                            </children>
                         </AnchorPane>
                      </content></Tab>
@@ -95,7 +95,7 @@
                   <Font size="18.0" />
                </font></Label>
             <Label layoutX="633.0" layoutY="65.0" text="Отчетный период" />
-            <JFXTextField layoutX="513.0" layoutY="15.0" />
+            <JFXTextField fx:id="numberVedomosti" layoutX="513.0" layoutY="15.0" />
             <Label layoutX="705.0" layoutY="14.0" text="Дата">
                <font>
                   <Font size="18.0" />
