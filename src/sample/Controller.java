@@ -9,10 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.InputMethodEvent;
@@ -20,13 +17,24 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class Controller {
 
     public JFXTextField numberVedomosti;
     public TextField priceField1;
     public TextField priceField2;
+    public ComboBox institution;
+    public ComboBox unit;
+
+    private ArrayList<String> institutionContent;
+    private ArrayList<String> unitConten;
+
+
     @FXML
     private AnchorPane topPart;
 
@@ -148,12 +156,27 @@ public class Controller {
 //                "\\d+\\.\\d{2}\\z"
             }
         });
+
+        for( String current: this.institutionContent ){
+
+            this.institution.getItems().add( current );
+
+        }
+
+        for( String current: this.unitConten ){
+
+            this.unit.getItems().add( current );
+
+        }
     }
 
     public Controller(){
 
+        this.institutionContent = this.readFile("/src/directory/organization");
+        this.unitConten = this.readFile("/src/directory/unit");
 
     }
+
     public void addLineAction(ActionEvent actionEvent) {
 
         TableView<Dog> tv = new TableView<>();
@@ -232,10 +255,27 @@ public class Controller {
 
     }
 
-    public void isMoney(InputMethodEvent inputMethodEvent) {
+    public ArrayList<String> readFile( String path ){
 
-        System.out.println( inputMethodEvent.getCommitted() );
+        ArrayList<String> tmp = new ArrayList<>();
 
+        try{
+
+            FileInputStream fstream = new FileInputStream( path );
+            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+            String strLine;
+
+            while ((strLine = br.readLine()) != null){
+                tmp.add( strLine );
+            }
+
+        }catch (IOException e){
+
+            System.out.println("Ошибка чтения файла");
+
+        }
+
+        return  tmp;
     }
 }
 
