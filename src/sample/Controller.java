@@ -1,21 +1,24 @@
 package sample;
 
 import com.jfoenix.controls.JFXTextField;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.InputMethodEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -30,6 +33,15 @@ public class Controller {
     public TextField priceField2;
     public ComboBox institution;
     public ComboBox unit;
+    public TableView table;
+
+    public TableColumn<Document, String> numCol;
+    public TableColumn<Document, String> titleCol;
+    public TableColumn codeCol;
+    public TableColumn balanceCol1;
+    public TableColumn postupiloCol;
+    public TableColumn balanceCol2;
+    public TableColumn costsCol;
 
     private ArrayList<String> institutionContent;
     private ArrayList<String> unitConten;
@@ -170,6 +182,44 @@ public class Controller {
 
         }
 //        this.unit.getSelectionModel().select( 0 );
+
+        // ==== NUMBER (TEXT FIELD) ===
+        this.numCol.setCellValueFactory(new PropertyValueFactory<>("number"));
+        this.numCol.setCellFactory(TextFieldTableCell.<Document> forTableColumn());
+
+
+        // ==== GENDER (COMBO BOX) ===
+
+        ObservableList<String> nameList = FXCollections.observableArrayList(Document.values());
+
+        this.titleCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Document, String>, ObservableValue<String>>() {
+
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Document, String> param) {
+                Document person = param.getValue();
+                // F,M
+                String genderCode = person.getNumber();
+//                Gender gender = Gender.getByCode(genderCode);
+                return new SimpleObjectProperty<String>(genderCode);//new SimpleObjectProperty<Gender>(gender);
+            }
+        });
+
+        this.titleCol.setCellFactory(ComboBoxTableCell.forTableColumn(nameList));
+
+        this.titleCol.setOnEditCommit((TableColumn.CellEditEvent<Document, String> event) -> {
+            TablePosition<Document, String> pos = event.getTablePosition();
+
+            String title = event.getNewValue();
+
+            int row = pos.getRow();
+            Document person = event.getTableView().getItems().get(row);
+
+            person.setNumber(title);
+        });
+
+
+
+        this.addNewLine();
     }
 
     public Controller(){
@@ -181,51 +231,7 @@ public class Controller {
 
     public void addLineAction(ActionEvent actionEvent) {
 
-        TableView<Dog> tv = new TableView<>();
-
-        tv.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY );
-
-        TableColumn<Dog, String> col = new TableColumn<Dog, String>("FirstName");
-        col.setCellValueFactory(new PropertyValueFactory<Dog, String>("firstName"));
-        tv.getColumns().add(col);
-        tv.setEditable(true);
-
-        col = new TableColumn<Dog, String>("LastName");
-        col.setCellValueFactory(new PropertyValueFactory<Dog, String>("lastName"));
-        col.setCellFactory(TextFieldTableCell.forTableColumn());
-
-        col.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Dog, String>>() {
-
-            @Override
-            public void handle(TableColumn.CellEditEvent<Dog, String> event) {
-
-                System.out.println(tv.getItems().get(1).getLastName());
-            }
-        });
-
-        tv.getColumns().add(col);
-
-        for (int i = 0; i < 30; i++) {
-            tv.getItems().add(new Dog("Test" + i, "Test" + i));
-        }
-
-
-        AnchorPane secondaryLayout = new AnchorPane();
-        secondaryLayout.getChildren().add(tv);
-
-        Scene secondScene = new Scene(secondaryLayout, 300, 300);
-        secondScene.getStylesheets().add("css/style.css");
-
-        // New window (Stage)
-        Stage newWindow = new Stage();
-        newWindow.setTitle("Show image");
-        newWindow.setScene(secondScene);
-
-        // Set position of second window, related to primary window.
-        newWindow.setX(Main.primary.getX() + 200);
-        newWindow.setY(Main.primary.getY() + 100);
-
-        newWindow.show();
+        this.addNewLine();
 
     }
 
@@ -257,7 +263,7 @@ public class Controller {
 
     }
 
-    public ArrayList<String> readFile( String path ){
+    private ArrayList<String> readFile(String path){
 
         ArrayList<String> tmp = new ArrayList<>();
 
@@ -278,6 +284,16 @@ public class Controller {
         }
 
         return  tmp;
+    }
+
+    private void addNewLine() {
+
+        if( Document.counter < Document.MAX_SZIE ) {
+
+            this.table.getItems().add(new Document(String.valueOf(Document.counter++)));
+
+        }
+
     }
 }
 
