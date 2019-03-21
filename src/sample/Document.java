@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class Document {
 
     // Fields
-    private String number;
+    private Integer number;
     private String title;
     private String code;
     private String balanceStart;
@@ -23,7 +23,7 @@ public class Document {
     public static int counter = 0;
     public static final int MAX_SZIE = 7;
 
-    public Document(String number) {
+    public Document(Integer number) {
         this.number = number;
     }
 
@@ -48,11 +48,11 @@ public class Document {
         return position;
     }
 
-    public String getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
-    public void setNumber(String number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
 

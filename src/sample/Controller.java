@@ -1,14 +1,20 @@
 package sample;
 
 import com.jfoenix.controls.JFXTextField;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -19,6 +25,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.converter.IntegerStringConverter;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -35,7 +42,7 @@ public class Controller {
     public ComboBox unit;
     public TableView table;
 
-    public TableColumn<Document, String> numCol;
+    public TableColumn<Document, Integer> numCol;
     public TableColumn<Document, String> titleCol;
     public TableColumn codeCol;
     public TableColumn balanceCol1;
@@ -185,39 +192,32 @@ public class Controller {
 
         // ==== NUMBER (TEXT FIELD) ===
         this.numCol.setCellValueFactory(new PropertyValueFactory<>("number"));
-        this.numCol.setCellFactory(TextFieldTableCell.<Document> forTableColumn());
+        this.numCol.setCellFactory(TextFieldTableCell.<Document, Integer>forTableColumn(new IntegerStringConverter()));
 
 
-        // ==== GENDER (COMBO BOX) ===
+        // ==== TITLE (COMBO BOX) ===
 
-        ObservableList<String> nameList = FXCollections.observableArrayList(Document.values());
+        ObservableList<String> titleList = FXCollections.observableArrayList(Document.values());
 
         this.titleCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Document, String>, ObservableValue<String>>() {
 
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Document, String> param) {
                 Document person = param.getValue();
-                // F,M
-                String genderCode = person.getNumber();
-//                Gender gender = Gender.getByCode(genderCode);
-                return new SimpleObjectProperty<String>(genderCode);//new SimpleObjectProperty<Gender>(gender);
+                String title = person.getTitle();
+                return new SimpleObjectProperty<String>(title);
             }
         });
 
-        this.titleCol.setCellFactory(ComboBoxTableCell.forTableColumn(nameList));
+        this.titleCol.setCellFactory(ComboBoxTableCell.forTableColumn(titleList));
 
         this.titleCol.setOnEditCommit((TableColumn.CellEditEvent<Document, String> event) -> {
             TablePosition<Document, String> pos = event.getTablePosition();
-
-            String title = event.getNewValue();
-
+            String newTitle= event.getNewValue();
             int row = pos.getRow();
             Document person = event.getTableView().getItems().get(row);
-
-            person.setNumber(title);
+            person.setTitle( newTitle );
         });
-
-
 
         this.addNewLine();
     }
@@ -290,12 +290,46 @@ public class Controller {
 
         if( Document.counter < Document.MAX_SZIE ) {
 
-            this.table.getItems().add(new Document(String.valueOf(Document.counter++)));
+            this.table.getItems().add(new Document(Document.counter++));
 
         }
 
     }
 }
+
+
+    // ==== GENDER (COMBO BOX) ===
+//    ObservableList<String> titleList = FXCollections.observableArrayList(Document.values());
+//
+//        this.titleCol.setCellValueFactory(i -> {
+//final StringProperty value = new SimpleStringProperty( i.getValue().getTitle() );
+//        // binding to constant value
+//        return Bindings.createObjectBinding(() -> value);
+//        });
+//
+//        this.titleCol.setCellFactory(col -> {
+//        TableCell<Document, StringProperty> c = new TableCell<>();
+//final ComboBox<String> comboBox = new ComboBox<>(titleList);
+//
+//        comboBox.setOnAction(new EventHandler<ActionEvent>() {
+//@Override
+//public void handle(ActionEvent event) {
+//
+//        Document a = (Document) table.getItems().get(0);
+//        a.setTitle( comboBox.getSelectionModel().getSelectedItem() );
+//        }
+//        });
+//        c.itemProperty().addListener((observable, oldValue, newValue) -> {
+//        if (oldValue != null) {
+//        comboBox.valueProperty().unbindBidirectional(oldValue);
+//        }
+//        if (newValue != null) {
+//        comboBox.valueProperty().bindBidirectional(newValue);
+//        }
+//        });
+//        c.graphicProperty().bind(Bindings.when(c.emptyProperty()).then((Node) null).otherwise(comboBox));
+//        return c;
+//        });
 
 
 
