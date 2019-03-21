@@ -162,18 +162,20 @@ public class Controller {
             this.institution.getItems().add( current );
 
         }
+//        this.institution.getSelectionModel().select( 0 );
 
         for( String current: this.unitConten ){
 
             this.unit.getItems().add( current );
 
         }
+//        this.unit.getSelectionModel().select( 0 );
     }
 
     public Controller(){
 
-        this.institutionContent = this.readFile("/src/directory/organization");
-        this.unitConten = this.readFile("/src/directory/unit");
+        this.institutionContent = this.readFile("src/directory/organization");
+        this.unitConten = this.readFile("src/directory/unit");
 
     }
 

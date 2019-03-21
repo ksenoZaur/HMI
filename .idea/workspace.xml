@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Регулярные выражения для ввода денежных сумм">
-      <change afterPath="$PROJECT_DIR$/src/directory/unit" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/sample/Document.java" afterDir="false" />
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Инициализация ComboBox-ов">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/directory/organization" beforeDir="false" afterPath="$PROJECT_DIR$/src/directory/organization" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Lab3HMI/sample/Controller$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Lab3HMI/sample/Controller$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Lab3HMI/sample/Controller.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Lab3HMI/sample/Controller.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Lab3HMI/sample/lab3HMI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Lab3HMI/sample/lab3HMI.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/sample/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Controller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/lab3HMI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/lab3HMI.fxml" afterDir="false" />
     </list>
     <ignored path="JavaFxApplication.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -76,11 +75,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/sample/Controller.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="261">
-              <caret line="174" column="76" selection-start-line="174" selection-start-column="76" selection-end-line="174" selection-end-column="76" />
+            <state relative-caret-position="332">
+              <caret line="172" column="5" lean-forward="true" selection-start-line="172" selection-start-column="5" selection-end-line="172" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="class#1164:1529" />
@@ -99,7 +98,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/directory/unit">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="34">
@@ -207,8 +206,8 @@
         <option value="$PROJECT_DIR$/src/directory/organization" />
         <option value="$PROJECT_DIR$/src/sample/lab3HMI2.fxml" />
         <option value="$PROJECT_DIR$/src/sample/Document.java" />
-        <option value="$PROJECT_DIR$/src/sample/Controller.java" />
         <option value="$PROJECT_DIR$/src/directory/unit" />
+        <option value="$PROJECT_DIR$/src/sample/Controller.java" />
       </list>
     </option>
   </component>
@@ -270,7 +269,7 @@
     <property name="OverrideImplement.combined" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1553163510523" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1553164087322" />
     <property name="dynamic.classpath" value="false" />
     <property name="last_opened_file_path" value="C:/SceneBuilder8/jar/jfoenix-8.0.8.jar!/" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
@@ -382,7 +381,7 @@
       <workItem from="1552576218363" duration="20183000" />
       <workItem from="1552992082765" duration="11017000" />
       <workItem from="1553083467937" duration="13872000" />
-      <workItem from="1553161489169" duration="2019000" />
+      <workItem from="1553161489169" duration="2595000" />
     </task>
     <task id="LOCAL-00001" summary="Внешний вид почти готов">
       <created>1553091588804</created>
@@ -398,17 +397,24 @@
       <option name="project" value="LOCAL" />
       <updated>1553102783338</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Инициализация ComboBox-ов">
+      <created>1553163545256</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1553163545256</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="48393000" />
+    <option name="totallyTimeSpent" value="48969000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.6703755" visible="true" weight="0.21633889" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.6703755" visible="true" weight="0.21633889" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" />
       <window_info id="Designer" order="3" />
@@ -417,7 +423,7 @@
       <window_info id="UI Designer" order="6" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32921174" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.18821605" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.18821605" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.14075287" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -453,7 +459,8 @@
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
     <MESSAGE value="Внешний вид почти готов" />
     <MESSAGE value="Регулярные выражения для ввода денежных сумм" />
-    <option name="LAST_COMMIT_MESSAGE" value="Регулярные выражения для ввода денежных сумм" />
+    <MESSAGE value="Инициализация ComboBox-ов" />
+    <option name="LAST_COMMIT_MESSAGE" value="Инициализация ComboBox-ов" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -570,10 +577,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/directory/unit">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="15" selection-start-line="2" selection-start-column="15" selection-end-line="2" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/sample/Controller.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="174" column="76" selection-start-line="174" selection-start-column="76" selection-end-line="174" selection-end-column="76" />
+        <state relative-caret-position="332">
+          <caret line="172" column="5" lean-forward="true" selection-start-line="172" selection-start-column="5" selection-end-line="172" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#1164:1529" />
@@ -588,13 +602,6 @@
             <element signature="method#linkAction#0;class#Controller#0" />
             <element signature="method#readFile#0;class#Controller#0" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/directory/unit">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="15" selection-start-line="2" selection-start-column="15" selection-end-line="2" selection-end-column="15" />
         </state>
       </provider>
     </entry>
