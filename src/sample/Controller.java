@@ -25,6 +25,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 
 import java.io.BufferedReader;
@@ -44,11 +45,11 @@ public class Controller {
 
     public TableColumn<Document, Integer> numCol;
     public TableColumn<Document, String> titleCol;
-    public TableColumn codeCol;
-    public TableColumn balanceCol1;
-    public TableColumn postupiloCol;
-    public TableColumn balanceCol2;
-    public TableColumn costsCol;
+    public TableColumn<Document, String> codeCol;
+    public TableColumn<Document, Double> balanceCol1;
+    public TableColumn<Document, Double> postupiloCol;
+    public TableColumn<Document, Double> balanceCol2;
+    public TableColumn<Document, Double> costsCol;
 
     private ArrayList<String> institutionContent;
     private ArrayList<String> unitConten;
@@ -196,27 +197,105 @@ public class Controller {
 
 
         // ==== TITLE (COMBO BOX) ===
-
-        ObservableList<String> titleList = FXCollections.observableArrayList(Document.values());
-
-        this.titleCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Document, String>, ObservableValue<String>>() {
-
+        ObservableList<String> titleList = FXCollections.observableArrayList(Document.codeList().keySet());
+        this.titleCol.setCellValueFactory( new PropertyValueFactory<>("title"));
+        this.titleCol.setCellFactory(new Callback<TableColumn<Document, String>, TableCell<Document, String>>() {
             @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Document, String> param) {
-                Document person = param.getValue();
-                String title = person.getTitle();
-                return new SimpleObjectProperty<String>(title);
+            public TableCell<Document, String> call(TableColumn<Document, String> param) {
+
+                final ComboBox<String> comboBox = new ComboBox<>(titleList);
+
+                comboBox.setMaxWidth( Integer.MAX_VALUE );
+                comboBox.setPrefWidth( titleCol.getWidth() );
+
+                TableCell<Document, String> cell = new TableCell<Document, String>() {
+                    @Override
+                    protected void updateItem(String reason, boolean empty) {
+                        super.updateItem(reason, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            comboBox.setValue(reason);
+                            setGraphic(comboBox);
+                        }
+                    }
+                };
+
+                comboBox.setOnAction(new EventHandler<ActionEvent>() {
+
+                    @Override
+                    public void handle(ActionEvent event) {
+    //                    table.getItems().get( cell.getIndex() )
+                        Document a = (Document) table.getItems().get(cell.getIndex());
+                        a.setTitle( comboBox.getSelectionModel().getSelectedItem() );
+                        ((Document) table.getItems().get( cell.getIndex() )).setCode(Document.codeList().get( a.getTitle() ));
+                        table.refresh();
+                    }
+                });
+                return cell ;
             }
         });
 
-        this.titleCol.setCellFactory(ComboBoxTableCell.forTableColumn(titleList));
+        // ==== CODE (TEXT FIELD) ===
+        this.codeCol.setCellValueFactory( new PropertyValueFactory<>("code"));
+        this.codeCol.setCellFactory( TextFieldTableCell.<Document>forTableColumn()  );
+        this.codeCol.setEditable( false );
 
-        this.titleCol.setOnEditCommit((TableColumn.CellEditEvent<Document, String> event) -> {
-            TablePosition<Document, String> pos = event.getTablePosition();
-            String newTitle= event.getNewValue();
+        // TODO Сделать проверку на ввод не денежной суммы ( формат //d*.//d{2} );
+        //  Применение не только по нажатию Enter
+
+        // ==== BALANCE1 (TEXT FIELD) ===
+        this.balanceCol1.setCellValueFactory(new PropertyValueFactory<>("balanceStart"));
+        this.balanceCol1.setCellFactory(TextFieldTableCell.<Document, Double>forTableColumn(new DoubleStringConverter()));
+        this.balanceCol1.setOnEditCommit((TableColumn.CellEditEvent<Document, Double> event) -> {
+            TablePosition<Document, Double> pos = event.getTablePosition();
+
+            Double newStartBalance = event.getNewValue();
+
             int row = pos.getRow();
-            Document person = event.getTableView().getItems().get(row);
-            person.setTitle( newTitle );
+            Document doc = event.getTableView().getItems().get(row);
+
+            doc.setBalanceStart( newStartBalance );
+        });
+
+        // ==== BALANCE2 (TEXT FIELD) ===
+        this.balanceCol2.setCellValueFactory(new PropertyValueFactory<>("balanceEnd"));
+        this.balanceCol2.setCellFactory(TextFieldTableCell.<Document, Double>forTableColumn(new DoubleStringConverter()));
+        this.balanceCol2.setOnEditCommit((TableColumn.CellEditEvent<Document, Double> event) -> {
+
+            TablePosition<Document, Double> pos = event.getTablePosition();
+            Double newEndBalance = event.getNewValue();
+            int row = pos.getRow();
+            Document doc = event.getTableView().getItems().get(row);
+            doc.setBalanceEnd( newEndBalance );
+
+        });
+
+
+        // ==== USE (TEXT FIELD) ===
+        this.postupiloCol.setCellValueFactory(new PropertyValueFactory<>("arrived"));
+        this.postupiloCol.setCellFactory(TextFieldTableCell.<Document, Double>forTableColumn(new DoubleStringConverter()));
+        this.postupiloCol.setOnEditCommit((TableColumn.CellEditEvent<Document, Double> event) -> {
+
+            TablePosition<Document, Double> pos = event.getTablePosition();
+            Double newArrived = event.getNewValue();
+            int row = pos.getRow();
+            Document doc = event.getTableView().getItems().get(row);
+            doc.setArrived( newArrived );
+
+        });
+
+        // ==== ARRIVED (TEXT FIELD) ===
+        this.costsCol.setCellValueFactory(new PropertyValueFactory<>("use"));
+        this.costsCol.setCellFactory(TextFieldTableCell.<Document, Double>forTableColumn(new DoubleStringConverter()));
+        this.costsCol.setOnEditCommit((TableColumn.CellEditEvent<Document, Double> event) -> {
+
+            TablePosition<Document, Double> pos = event.getTablePosition();
+            Double newUse = event.getNewValue();
+            int row = pos.getRow();
+            Document doc = event.getTableView().getItems().get(row);
+            doc.setUse( newUse );
+
         });
 
         this.addNewLine();

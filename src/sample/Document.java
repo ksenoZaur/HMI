@@ -2,6 +2,7 @@ package sample;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *  Класс представляющий документ - форму ОП-13
@@ -13,39 +14,61 @@ public class Document {
     private Integer number;
     private String title;
     private String code;
-    private String balanceStart;
-    private String arrived;
-    private String balanceEnd;
-    private String use;
+    private Double balanceStart;
+    private Double arrived;
+    private Double balanceEnd;
+    private Double use;
 
     private static final String path = "src/directory/position";
 
     public static int counter = 0;
     public static final int MAX_SZIE = 7;
+//    private static ArrayList<String> titleList;
+    private static HashMap<String, String> codeList;
 
-    public Document(Integer number) {
-        this.number = number;
+    static {
+
+        Document.codeList = Document.init();
+
     }
 
-    public static ArrayList<String> values() {
 
-        ArrayList<String> position = new ArrayList<>();
+    public Document(Integer number) {
+
+        this.number = number;
+
+    }
+
+    private static HashMap<String, String> init() {
+
+        String[] position;
+        HashMap<String, String> codeList = new HashMap<>();
 
         try {
             FileInputStream fi = new FileInputStream( path );
             BufferedReader br = new BufferedReader( new InputStreamReader( fi )  );
             String newLine;
 
-            while( ( newLine = br.readLine()) != null ){
-                position.add( newLine );
+            while( ( newLine = br.readLine()) != null ) {
+
+                position = newLine.split("\\#");
+//                this.titleList.add( position[ 0 ] );
+                codeList.put( position[ 0 ], position[ 1 ]);
             }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
+
             e.printStackTrace();
+
         }
-        return position;
+
+        return codeList;
+    }
+
+    public static HashMap<String, String> codeList() {
+
+        return codeList;
+
     }
 
     public Integer getNumber() {
@@ -72,35 +95,39 @@ public class Document {
         this.code = code;
     }
 
-    public String getBalanceStart() {
+    public Double getBalanceStart() {
         return balanceStart;
     }
 
-    public void setBalanceStart(String balanceStart) {
+    public void setBalanceStart(Double balanceStart) {
         this.balanceStart = balanceStart;
     }
 
-    public String getArrived() {
+    public Double getArrived() {
         return arrived;
     }
 
-    public void setArrived(String arrived) {
+    public void setArrived(Double arrived) {
         this.arrived = arrived;
     }
 
-    public String getBalanceEnd() {
+    public Double getBalanceEnd() {
         return balanceEnd;
     }
 
-    public void setBalanceEnd(String balanceEnd) {
+    public void setBalanceEnd(Double balanceEnd) {
         this.balanceEnd = balanceEnd;
     }
 
-    public String getUse() {
+    public Double getUse() {
         return use;
     }
 
-    public void setUse(String use) {
+    public void setUse(Double use) {
         this.use = use;
+    }
+
+    public static String getPath() {
+        return path;
     }
 }
