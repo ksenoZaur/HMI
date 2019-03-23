@@ -18,7 +18,9 @@ public class Main extends Application {
         Main.primary = primaryStage;
         Parent root = FXMLLoader.load(getClass().getResource("lab3HMI.fxml"));
         primaryStage.setTitle("Форма ОП-13");
-        primaryStage.setScene(new Scene(root, 700, 400));
+        Scene scene = new Scene(root, 700, 400);
+        scene.getStylesheets().add("css/style.css");
+        primaryStage.setScene( scene );
         primaryStage.show();
 
     }

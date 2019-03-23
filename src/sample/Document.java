@@ -1,133 +1,140 @@
 package sample;
 
-import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-/**
- *  Класс представляющий документ - форму ОП-13
- *
- * */
 public class Document {
 
-    // Fields
-    private Integer number;
-    private String title;
-    private String code;
-    private Double balanceStart;
-    private Double arrived;
-    private Double balanceEnd;
-    private Double use;
+    public final static int MAX_ROW = 7;
 
-    private static final String path = "src/directory/position";
+    private String statementNumber;
+    private String createDate;
+    private String  periodStart;
+    private String  periodEnd;
+    private String organization;
+    private String unit;
+    private String fio1;
+    private String position;
+    private String fio2;
 
-    public static int counter = 0;
-    public static final int MAX_SZIE = 7;
-//    private static ArrayList<String> titleList;
-    private static HashMap<String, String> codeList;
 
-    static {
+    private String costOfSpices;
+    private String saltCost;
 
-        Document.codeList = Document.init();
 
+    private ArrayList<Notation> notations;
+    private ArrayList<NotationMinTable> notationMinTables;
+
+
+    public Document() {
+        this.notationMinTables = new ArrayList<NotationMinTable>(){{ add(new NotationMinTable());
+            add(new NotationMinTable());}};
     }
 
-
-    public Document(Integer number) {
-
-        this.number = number;
-
+    public ArrayList<NotationMinTable> getNotationMinTables() {
+        return notationMinTables;
     }
 
-    private static HashMap<String, String> init() {
+    public void setCostOfSpices(String costOfSpices) {
+        this.costOfSpices = costOfSpices;
+    }
 
-        String[] position;
-        HashMap<String, String> codeList = new HashMap<>();
+    public void setSaltCost(String saltCost) {
+        this.saltCost = saltCost;
+    }
 
-        try {
-            FileInputStream fi = new FileInputStream( path );
-            BufferedReader br = new BufferedReader( new InputStreamReader( fi )  );
-            String newLine;
+    public void setNotationMinTables(ArrayList<NotationMinTable> notationMinTables) {
+        this.notationMinTables = notationMinTables;
+    }
 
-            while( ( newLine = br.readLine()) != null ) {
+    public String getStatementNumber() {
+        return statementNumber;
+    }
 
-                position = newLine.split("\\#");
-//                this.titleList.add( position[ 0 ] );
-                codeList.put( position[ 0 ], position[ 1 ]);
-            }
+    public void setStatementNumber(String statementNumber) {
+        this.statementNumber = statementNumber;
+    }
 
-        } catch (IOException e) {
+    public String getCreateDate() {
+        return createDate;
+    }
 
-            e.printStackTrace();
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
+    }
+
+    public String getPeriodStart() {
+        return periodStart;
+    }
+
+    public void setPeriodStart(String periodStart) {
+        this.periodStart = periodStart;
+    }
+
+    public String getPeriodEnd() {
+        return periodEnd;
+    }
+
+    public void setPeriodEnd(String periodEnd) {
+        this.periodEnd = periodEnd;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getFio1() {
+        return fio1;
+    }
+
+    public void setFio1(String fio1) {
+        this.fio1 = fio1;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getFio2() {
+        return fio2;
+    }
+
+    public void setFio2(String fio2) {
+        this.fio2 = fio2;
+    }
+
+    public ArrayList<Notation> getNotations() {
+        return notations;
+    }
+
+    public void setNotations(ArrayList<Notation> notations) {
+        this.notations = notations;
+    }
+
+    public void add( Notation notation ){
+
+        if( this.notations == null ){
+
+            this.notations = new ArrayList<>();
 
         }
 
-        return codeList;
-    }
+        this.notations.add( notation );
 
-    public static HashMap<String, String> codeList() {
-
-        return codeList;
-
-    }
-
-    public Integer getNumber() {
-        return number;
-    }
-
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public Double getBalanceStart() {
-        return balanceStart;
-    }
-
-    public void setBalanceStart(Double balanceStart) {
-        this.balanceStart = balanceStart;
-    }
-
-    public Double getArrived() {
-        return arrived;
-    }
-
-    public void setArrived(Double arrived) {
-        this.arrived = arrived;
-    }
-
-    public Double getBalanceEnd() {
-        return balanceEnd;
-    }
-
-    public void setBalanceEnd(Double balanceEnd) {
-        this.balanceEnd = balanceEnd;
-    }
-
-    public Double getUse() {
-        return use;
-    }
-
-    public void setUse(Double use) {
-        this.use = use;
-    }
-
-    public static String getPath() {
-        return path;
     }
 }

@@ -1,11 +1,8 @@
 package sample;
 
+import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import com.sun.javafx.scene.control.skin.TableHeaderRow;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -14,11 +11,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
@@ -32,25 +27,46 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Controller {
 
-    public JFXTextField numberVedomosti;
+    public static Controller self;
+    private Document document;
+
+    // Поля 2 таба
     public TextField priceField1;
     public TextField priceField2;
+
+    public TextField itogo;
+    public TextField control;
+    public TextField nedorashod;
+
+    // Колонки малой таблицы
+    public TableView<NotationMinTable> minTable;
+    public TableColumn<NotationMinTable, Integer> minTableCol1;
+    public TableColumn<NotationMinTable, Double> minTableCol2;
+
+    // Шапка
+    public JFXTextField numberVedomosti;
+    public JFXDatePicker createDate;
+    public DatePicker periodStart;
+    public DatePicker periodEnd;
     public ComboBox institution;
     public ComboBox unit;
-    public TableView table;
 
-    public TableColumn<Document, Integer> numCol;
-    public TableColumn<Document, String> titleCol;
-    public TableColumn<Document, String> codeCol;
-    public TableColumn<Document, Double> balanceCol1;
-    public TableColumn<Document, Double> postupiloCol;
-    public TableColumn<Document, Double> balanceCol2;
-    public TableColumn<Document, Double> costsCol;
+    // Колонки большой таблицы
+    public TableView<Notation> table;
+    public TableColumn<Notation, Integer> numCol;
+    public TableColumn<Notation, String> titleCol;
+    public TableColumn<Notation, String> codeCol;
+    public TableColumn<Notation, Double> balanceCol1;
+    public TableColumn<Notation, Double> postupiloCol;
+    public TableColumn<Notation, Double> balanceCol2;
+    public TableColumn<Notation, Double> costsCol;
 
+    // Данные для инициализации комбобоксов
     private ArrayList<String> institutionContent;
     private ArrayList<String> unitConten;
 
@@ -64,8 +80,62 @@ public class Controller {
     @FXML
     private Stage primaryStage;
 
+    // Методы
     @FXML
     void initialize() {
+
+
+        for(NotationMinTable current: this.document.getNotationMinTables() ) {
+            this.minTable.getItems().add( current );
+        }
+
+        this.itogo.setText( String.valueOf( 0.0 ));
+
+        this.minTable.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> source, Number oldWidth, Number newWidth)
+            {
+                TableHeaderRow header = (TableHeaderRow) minTable.lookup("TableHeaderRow");
+                header.reorderingProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        header.setReordering(false);
+                    }
+                });
+            }
+        });
+
+        this.table.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> source, Number oldWidth, Number newWidth)
+            {
+                TableHeaderRow header = (TableHeaderRow) table.lookup("TableHeaderRow");
+                header.reorderingProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        header.setReordering(false);
+                    }
+                });
+            }
+        });
+
+        this.minTableCol1.setCellValueFactory(new PropertyValueFactory<>("numberOfDishes"));
+        this.minTableCol1.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        this.minTableCol1.setOnEditCommit((TableColumn.CellEditEvent<NotationMinTable, Integer> event) -> {
+            TablePosition<NotationMinTable, Integer> pos = event.getTablePosition();
+
+            Integer numberOfDishes = event.getNewValue();
+
+            int row = pos.getRow();
+
+            NotationMinTable notMin = event.getTableView().getItems().get(row);
+            notMin.setNumberOfDishes( numberOfDishes );
+
+            this.setTotalPrice( row );
+        });
+
+        this.minTableCol2.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
+        this.minTableCol2.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
 
         this.primaryStage = Main.primary;
         this.numberVedomosti.textProperty().addListener(new ChangeListener<String>() {
@@ -189,26 +259,25 @@ public class Controller {
             this.unit.getItems().add( current );
 
         }
-//        this.unit.getSelectionModel().select( 0 );
 
         // ==== NUMBER (TEXT FIELD) ===
         this.numCol.setCellValueFactory(new PropertyValueFactory<>("number"));
-        this.numCol.setCellFactory(TextFieldTableCell.<Document, Integer>forTableColumn(new IntegerStringConverter()));
+        this.numCol.setCellFactory(TextFieldTableCell.<Notation, Integer>forTableColumn(new IntegerStringConverter()));
 
 
         // ==== TITLE (COMBO BOX) ===
-        ObservableList<String> titleList = FXCollections.observableArrayList(Document.codeList().keySet());
+        ObservableList<String> titleList = FXCollections.observableArrayList(Notation.codeList().keySet());
         this.titleCol.setCellValueFactory( new PropertyValueFactory<>("title"));
-        this.titleCol.setCellFactory(new Callback<TableColumn<Document, String>, TableCell<Document, String>>() {
+        this.titleCol.setCellFactory(new Callback<TableColumn<Notation, String>, TableCell<Notation, String>>() {
             @Override
-            public TableCell<Document, String> call(TableColumn<Document, String> param) {
+            public TableCell<Notation, String> call(TableColumn<Notation, String> param) {
 
                 final ComboBox<String> comboBox = new ComboBox<>(titleList);
 
                 comboBox.setMaxWidth( Integer.MAX_VALUE );
                 comboBox.setPrefWidth( titleCol.getWidth() );
 
-                TableCell<Document, String> cell = new TableCell<Document, String>() {
+                TableCell<Notation, String> cell = new TableCell<Notation, String>() {
                     @Override
                     protected void updateItem(String reason, boolean empty) {
                         super.updateItem(reason, empty);
@@ -226,9 +295,9 @@ public class Controller {
                     @Override
                     public void handle(ActionEvent event) {
     //                    table.getItems().get( cell.getIndex() )
-                        Document a = (Document) table.getItems().get(cell.getIndex());
+                        Notation a = (Notation) table.getItems().get(cell.getIndex());
                         a.setTitle( comboBox.getSelectionModel().getSelectedItem() );
-                        ((Document) table.getItems().get( cell.getIndex() )).setCode(Document.codeList().get( a.getTitle() ));
+                        ((Notation) table.getItems().get( cell.getIndex() )).setCode(Notation.codeList().get( a.getTitle() ));
                         table.refresh();
                     }
                 });
@@ -238,7 +307,7 @@ public class Controller {
 
         // ==== CODE (TEXT FIELD) ===
         this.codeCol.setCellValueFactory( new PropertyValueFactory<>("code"));
-        this.codeCol.setCellFactory( TextFieldTableCell.<Document>forTableColumn()  );
+        this.codeCol.setCellFactory( TextFieldTableCell.<Notation>forTableColumn()  );
         this.codeCol.setEditable( false );
 
         // TODO Сделать проверку на ввод не денежной суммы ( формат //d*.//d{2} );
@@ -246,54 +315,56 @@ public class Controller {
 
         // ==== BALANCE1 (TEXT FIELD) ===
         this.balanceCol1.setCellValueFactory(new PropertyValueFactory<>("balanceStart"));
-        this.balanceCol1.setCellFactory(TextFieldTableCell.<Document, Double>forTableColumn(new DoubleStringConverter()));
-        this.balanceCol1.setOnEditCommit((TableColumn.CellEditEvent<Document, Double> event) -> {
-            TablePosition<Document, Double> pos = event.getTablePosition();
+        this.balanceCol1.setCellFactory(TextFieldTableCell.<Notation, Double>forTableColumn(new DoubleStringConverter()));
+        this.balanceCol1.setOnEditCommit((TableColumn.CellEditEvent<Notation, Double> event) -> {
+            TablePosition<Notation, Double> pos = event.getTablePosition();
 
             Double newStartBalance = event.getNewValue();
 
             int row = pos.getRow();
-            Document doc = event.getTableView().getItems().get(row);
+            Notation doc = event.getTableView().getItems().get(row);
 
             doc.setBalanceStart( newStartBalance );
         });
 
         // ==== BALANCE2 (TEXT FIELD) ===
         this.balanceCol2.setCellValueFactory(new PropertyValueFactory<>("balanceEnd"));
-        this.balanceCol2.setCellFactory(TextFieldTableCell.<Document, Double>forTableColumn(new DoubleStringConverter()));
-        this.balanceCol2.setOnEditCommit((TableColumn.CellEditEvent<Document, Double> event) -> {
+        this.balanceCol2.setCellFactory(TextFieldTableCell.<Notation, Double>forTableColumn(new DoubleStringConverter()));
+        this.balanceCol2.setOnEditCommit((TableColumn.CellEditEvent<Notation, Double> event) -> {
 
-            TablePosition<Document, Double> pos = event.getTablePosition();
+            TablePosition<Notation, Double> pos = event.getTablePosition();
             Double newEndBalance = event.getNewValue();
             int row = pos.getRow();
-            Document doc = event.getTableView().getItems().get(row);
+            Notation doc = event.getTableView().getItems().get(row);
             doc.setBalanceEnd( newEndBalance );
 
         });
 
 
-        // ==== USE (TEXT FIELD) ===
+        // ==== ARRIVED (TEXT FIELD) ===
         this.postupiloCol.setCellValueFactory(new PropertyValueFactory<>("arrived"));
-        this.postupiloCol.setCellFactory(TextFieldTableCell.<Document, Double>forTableColumn(new DoubleStringConverter()));
-        this.postupiloCol.setOnEditCommit((TableColumn.CellEditEvent<Document, Double> event) -> {
+        this.postupiloCol.setCellFactory(TextFieldTableCell.<Notation, Double>forTableColumn(new DoubleStringConverter()));
+        this.postupiloCol.setOnEditCommit((TableColumn.CellEditEvent<Notation, Double> event) -> {
 
-            TablePosition<Document, Double> pos = event.getTablePosition();
+            TablePosition<Notation, Double> pos = event.getTablePosition();
             Double newArrived = event.getNewValue();
             int row = pos.getRow();
-            Document doc = event.getTableView().getItems().get(row);
+            Notation doc = event.getTableView().getItems().get(row);
             doc.setArrived( newArrived );
 
         });
 
-        // ==== ARRIVED (TEXT FIELD) ===
+        // ==== USE (TEXT FIELD) ===
         this.costsCol.setCellValueFactory(new PropertyValueFactory<>("use"));
-        this.costsCol.setCellFactory(TextFieldTableCell.<Document, Double>forTableColumn(new DoubleStringConverter()));
-        this.costsCol.setOnEditCommit((TableColumn.CellEditEvent<Document, Double> event) -> {
 
-            TablePosition<Document, Double> pos = event.getTablePosition();
+        this.costsCol.setCellFactory(TextFieldTableCell.<Notation, Double>forTableColumn(new DoubleStringConverter()));
+
+        this.costsCol.setOnEditCommit((TableColumn.CellEditEvent<Notation, Double> event) -> {
+
+            TablePosition<Notation, Double> pos = event.getTablePosition();
             Double newUse = event.getNewValue();
             int row = pos.getRow();
-            Document doc = event.getTableView().getItems().get(row);
+            Notation doc = event.getTableView().getItems().get(row);
             doc.setUse( newUse );
 
         });
@@ -303,6 +374,8 @@ public class Controller {
 
     public Controller(){
 
+        Controller.self = this;
+        this.document = new Document();
         this.institutionContent = this.readFile("src/directory/organization");
         this.unitConten = this.readFile("src/directory/unit");
 
@@ -321,6 +394,7 @@ public class Controller {
         Parent root = FXMLLoader.load(getClass().getResource("lab3HMI2.fxml"));
 
         Stage responsiblePerson = new Stage();
+        responsiblePerson.setOnCloseRequest(e->e.consume());
 
         // Set position of second window, related to primary window.
         responsiblePerson.setX(Main.primary.getX() + 200);
@@ -342,7 +416,7 @@ public class Controller {
 
     }
 
-    private ArrayList<String> readFile(String path){
+    public ArrayList<String> readFile(String path){
 
         ArrayList<String> tmp = new ArrayList<>();
 
@@ -367,48 +441,125 @@ public class Controller {
 
     private void addNewLine() {
 
-        if( Document.counter < Document.MAX_SZIE ) {
+        if(  Notation.counter == 0 ){
 
-            this.table.getItems().add(new Document(Document.counter++));
+            Notation notation = new Notation(Notation.counter++);
+            this.document.add( notation );
+            this.table.getItems().add( notation );
+
+        } else if( Notation.counter < Document.MAX_ROW &&
+                this.table.getItems().get( this.table.getItems().size() - 1).getTitle() != null ) {
+
+            Notation notation = new Notation(Notation.counter++);
+            this.document.add( notation );
+            this.table.getItems().add( notation );
 
         }
 
     }
+
+    public void numberAction(ActionEvent actionEvent) {
+
+        this.document.setStatementNumber( this.numberVedomosti.getText() );
+
+    }
+
+    public void createDateAction(ActionEvent actionEvent) {
+
+        this.document.setCreateDate( this.createDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+    }
+
+    public void periodStartAction(ActionEvent actionEvent) {
+
+        this.document.setPeriodStart( this.periodStart.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+    }
+
+    public void periodEndAction(ActionEvent actionEvent) {
+
+        this.document.setPeriodEnd( this.periodEnd.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+    }
+
+    public void institutionAction(ActionEvent actionEvent) {
+
+        this.document.setOrganization( (String) this.institution.getSelectionModel().getSelectedItem() );
+
+    }
+
+    public void unitAction(ActionEvent actionEvent) {
+        this.document.setUnit( (String) this.unit.getSelectionModel().getSelectedItem() );
+    }
+
+    public Document getDocumnet() {
+        return this.document;
+    }
+
+    public void priceField1Action(ActionEvent actionEvent) {
+
+        this.getDocumnet().setCostOfSpices( this.priceField1.getText() );
+        this.setTotalPrice( 0 );
+
+    }
+
+    public void priceField2Action(ActionEvent actionEvent) {
+
+        this.getDocumnet().setSaltCost( this.priceField2.getText() );
+        this.setTotalPrice( 1 );
+
+    }
+
+    public void setTotalPrice( int indexRow ){
+
+        switch ( indexRow ){
+
+            case 0:
+                if( this.priceField1.getText() != null ){
+
+                    double totalPrice = Double.valueOf( this.priceField1.getText() ) *
+                            this.minTable.getItems().get( 0 ).getNumberOfDishes();
+
+                    this.minTable.getItems().get( indexRow ).setTotalPrice( totalPrice );
+                    this.setItogo();
+                    this.minTable.refresh();
+
+                }
+                break;
+
+            case 1:
+                if ( this.priceField2.getText() != null ){
+
+                    double totalPrice = Double.valueOf( this.priceField2.getText() ) *
+                            this.minTable.getItems().get( 1 ).getNumberOfDishes();
+
+                    this.minTable.getItems().get( indexRow ).setTotalPrice( totalPrice );
+                    this.setItogo();
+                    this.minTable.refresh();
+                }
+                break;
+        }
+    }
+
+    public void setItogo(){
+
+        this.itogo.setText( String.valueOf( this.minTable.getItems().get( 0 ).getTotalPrice() +
+                this.minTable.getItems().get( 1 ).getTotalPrice()));
+
+        this.setNedorashod();
+
+    }
+
+    public void controlAction(ActionEvent actionEvent) {
+        setNedorashod();
+    }
+
+    public void setNedorashod() {
+        try {
+            Double.valueOf( this.control.getText());
+            this.nedorashod.setText(String.valueOf(Double.valueOf(this.itogo.getText()) - Double.valueOf(this.control.getText())));
+        } catch ( Exception ex) {
+            System.out.println("Ошибка!");
+        }
+    }
 }
-
-
-    // ==== GENDER (COMBO BOX) ===
-//    ObservableList<String> titleList = FXCollections.observableArrayList(Document.values());
-//
-//        this.titleCol.setCellValueFactory(i -> {
-//final StringProperty value = new SimpleStringProperty( i.getValue().getTitle() );
-//        // binding to constant value
-//        return Bindings.createObjectBinding(() -> value);
-//        });
-//
-//        this.titleCol.setCellFactory(col -> {
-//        TableCell<Document, StringProperty> c = new TableCell<>();
-//final ComboBox<String> comboBox = new ComboBox<>(titleList);
-//
-//        comboBox.setOnAction(new EventHandler<ActionEvent>() {
-//@Override
-//public void handle(ActionEvent event) {
-//
-//        Document a = (Document) table.getItems().get(0);
-//        a.setTitle( comboBox.getSelectionModel().getSelectedItem() );
-//        }
-//        });
-//        c.itemProperty().addListener((observable, oldValue, newValue) -> {
-//        if (oldValue != null) {
-//        comboBox.valueProperty().unbindBidirectional(oldValue);
-//        }
-//        if (newValue != null) {
-//        comboBox.valueProperty().bindBidirectional(newValue);
-//        }
-//        });
-//        c.graphicProperty().bind(Bindings.when(c.emptyProperty()).then((Node) null).otherwise(comboBox));
-//        return c;
-//        });
-
-
-

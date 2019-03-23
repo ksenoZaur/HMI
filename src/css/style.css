@@ -1,8 +1,24 @@
-.table-row-cell {
-    -fx-cell-size: 100px;
+#minTable .table-row-cell {
+    -fx-cell-size: 56px;
 }
 
-.table-column {
+#minTable .table-column {
     -fx-alignment: CENTER;
-    -fx-font-size: 32;
+    -fx-font-size: 24;
 }
+
+#minTable .column-header {
+    -fx-background-color: transparent;
+    -fx-font-size: 12;
+}
+
+
+/*.table-row-cell {*/
+    /*-fx-background-color: #F3F1BF;*/
+    /*-fx-border-color: #363636;*/
+/*}*/
+
+/*.table-row-cell:empty {*/
+    /*-fx-background-color: white;*/
+    /*-fx-border-color: white;*/
+/*}*/
