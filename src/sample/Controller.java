@@ -34,6 +34,7 @@ public class Controller {
 
     public static Controller self;
     private Document document;
+    public static Stage stage;
 
     // Поля 2 таба
     public TextField priceField1;
@@ -90,6 +91,7 @@ public class Controller {
         }
 
         this.itogo.setText( String.valueOf( 0.0 ));
+        this.document.setItogo(0.0);
 
         this.minTable.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -147,6 +149,7 @@ public class Controller {
                 }
             }
         });
+
         this.priceField1.textProperty().addListener( new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue,
@@ -159,10 +162,6 @@ public class Controller {
 
                 }
 
-
-//                if(!newValue.matches("\\d*(\\.\\d{0,2})?")){
-//                    priceField1.setText(newValue.substring(0,newValue.length()-1));
-//                }
             }
 
         });
@@ -176,12 +175,6 @@ public class Controller {
                     priceField2.setText(newValue.replaceAll("[^\\d\\.]",""));
 
                 }
-
-//                if(!priceField2.getText().matches("\\d*(\\.\\d{0,2})?")){
-//
-//                    priceField2.setText(priceField2.getText().substring(0,newValue.length()-1));
-//
-//                }
             }
         });
 
@@ -212,10 +205,9 @@ public class Controller {
                         priceField1.setText( "0".concat( tmp ));
 
                     }
-//                "\\d+\\.\\d{2}\\z"
+                    this.document.setCostOfSpices( priceField1.getText());
             }
         });
-
         this.priceField2.focusedProperty().addListener( (obs, oldValue, newValue) -> {
 
             if ( !newValue ) {
@@ -243,6 +235,7 @@ public class Controller {
                         priceField2.setText( "0".concat( tmp ));
 
                     }
+                this.document.setSaltCost( priceField2.getText());
 //                "\\d+\\.\\d{2}\\z"
             }
         });
@@ -393,7 +386,11 @@ public class Controller {
 
         Parent root = FXMLLoader.load(getClass().getResource("lab3HMI2.fxml"));
 
+
         Stage responsiblePerson = new Stage();
+
+        Controller.stage = responsiblePerson;
+
         responsiblePerson.setOnCloseRequest(e->e.consume());
 
         // Set position of second window, related to primary window.
@@ -515,12 +512,12 @@ public class Controller {
         switch ( indexRow ){
 
             case 0:
-                if( this.priceField1.getText() != null ){
+                if( !this.priceField1.getText().isEmpty() ){
 
                     double totalPrice = Double.valueOf( this.priceField1.getText() ) *
                             this.minTable.getItems().get( 0 ).getNumberOfDishes();
 
-                    this.minTable.getItems().get( indexRow ).setTotalPrice( totalPrice );
+                    this.minTable.getItems().get( indexRow ).setTotalPrice( Math.round( totalPrice * 100.0 ) / 100.0);
                     this.setItogo();
                     this.minTable.refresh();
 
@@ -528,12 +525,12 @@ public class Controller {
                 break;
 
             case 1:
-                if ( this.priceField2.getText() != null ){
+                if ( !this.priceField2.getText().isEmpty() ){
 
                     double totalPrice = Double.valueOf( this.priceField2.getText() ) *
                             this.minTable.getItems().get( 1 ).getNumberOfDishes();
 
-                    this.minTable.getItems().get( indexRow ).setTotalPrice( totalPrice );
+                    this.minTable.getItems().get( indexRow ).setTotalPrice( Math.round( totalPrice * 100.0 ) / 100.0 );
                     this.setItogo();
                     this.minTable.refresh();
                 }
@@ -543,21 +540,33 @@ public class Controller {
 
     public void setItogo(){
 
-        this.itogo.setText( String.valueOf( this.minTable.getItems().get( 0 ).getTotalPrice() +
-                this.minTable.getItems().get( 1 ).getTotalPrice()));
+        this.itogo.setText( String.valueOf( Math.round( (this.minTable.getItems().get( 0 ).getTotalPrice() +
+                this.minTable.getItems().get( 1 ).getTotalPrice()) * 100 )/100.0));
+
+        this.document.setItogo( Double.valueOf( this.itogo.getText() ) );
 
         this.setNedorashod();
 
     }
 
     public void controlAction(ActionEvent actionEvent) {
+
+        this.control.setText( String.valueOf( (Double.valueOf( control.getText() ) * 100 ) / 100 ));
+
+        this.document.setControl( Double.valueOf( this.control.getText() ) );
+
         setNedorashod();
     }
 
     public void setNedorashod() {
         try {
             Double.valueOf( this.control.getText());
-            this.nedorashod.setText(String.valueOf(Double.valueOf(this.itogo.getText()) - Double.valueOf(this.control.getText())));
+
+            this.nedorashod.setText(String.valueOf( Math.round( (Double.valueOf(this.itogo.getText()) -
+                    Double.valueOf(this.control.getText())) * 100)/100.0));
+
+            this.document.setSumma( Double.valueOf( this.nedorashod.getText() ) );
+
         } catch ( Exception ex) {
             System.out.println("Ошибка!");
         }

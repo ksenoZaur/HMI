@@ -6,6 +6,42 @@ public class Document {
 
     public final static int MAX_ROW = 7;
 
+    public String getCostOfSpices() {
+        return costOfSpices;
+    }
+
+    public String getSaltCost() {
+        return saltCost;
+    }
+
+    private Double itogo;
+    private Double control;
+    private Double summa;
+
+    public Double getItogo() {
+        return itogo;
+    }
+
+    public Double getControl() {
+        return control;
+    }
+
+    public Double getSumma() {
+        return summa;
+    }
+
+    public void setItogo(Double itogo) {
+        this.itogo = itogo;
+    }
+
+    public void setControl(Double control) {
+        this.control = control;
+    }
+
+    public void setSumma(Double summa) {
+        this.summa = summa;
+    }
+
     private String statementNumber;
     private String createDate;
     private String  periodStart;

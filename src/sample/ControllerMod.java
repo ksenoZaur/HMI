@@ -5,13 +5,20 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import org.apache.poi.ss.formula.udf.UDFFinder;
+
+import java.io.*;
 
 public class ControllerMod {
+
+    private File otkuda;
 
     public ComboBox profession;
     public TextField fio2;
     public TextField fio1;
+    final DirectoryChooser directoryChooser = new DirectoryChooser();
 
     @FXML
     private ComboBox<?> bulgalterPerson;
@@ -49,9 +56,40 @@ public class ControllerMod {
     void saveAction(ActionEvent event) {
         // TODO выгрузка в excel
 
+        File dir = directoryChooser.showDialog( Controller.stage );
+        if (dir != null) {
 
+            this.otkuda = UpdateExcelDemo.file;
+            File result = this.createFile( dir );
 
-        this.abbortAction( event );
+            UpdateExcelDemo demo = new UpdateExcelDemo(Controller.self.getDocumnet());
+            demo.setResultFile( result );
+            demo.write();
+
+            this.abbortAction(event);
+        }
+    }
+
+    private File createFile(File dir) {
+
+        File newFile = new File(dir.getPath().concat("\\чOP_13.XLS"));
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream( this.otkuda );
+            os = new FileOutputStream( newFile );
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+
+            is.close();
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return newFile;
     }
 
     @FXML
