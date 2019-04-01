@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Document {
 
-    public final static int MAX_ROW = 7;
+    public final static int MAX_ROW = 8;
 
     public String getCostOfSpices() {
         return costOfSpices;
@@ -56,10 +56,28 @@ public class Document {
     private String costOfSpices;
     private String saltCost;
 
+    private Double mainItogo;
 
     private ArrayList<Notation> notations;
     private ArrayList<NotationMinTable> notationMinTables;
 
+    private Double itogoBlud;
+
+    public Double getMainItogo() {
+        return mainItogo;
+    }
+
+    public void setMainItogo(Double mainItogo) {
+        this.mainItogo = mainItogo;
+    }
+
+    public Double getItogoBlud() {
+        return itogoBlud;
+    }
+
+    public void setItogoBlud(Double itogoBlud) {
+        this.itogoBlud = itogoBlud;
+    }
 
     public Document() {
         this.notationMinTables = new ArrayList<NotationMinTable>(){{ add(new NotationMinTable());

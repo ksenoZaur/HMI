@@ -18,7 +18,14 @@ public class Main extends Application {
         Main.primary = primaryStage;
         Parent root = FXMLLoader.load(getClass().getResource("lab3HMI.fxml"));
         primaryStage.setTitle("Форма ОП-13");
-        Scene scene = new Scene(root, 700, 400);
+        Scene scene = new Scene(root, 1000, 500);
+        primaryStage.setMinWidth(1000);
+        primaryStage.setMinHeight(720);
+//        primaryStage.widthProperty().addListener(new ChangeListener() {
+//            @Override
+//            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+//            }
+//        });
         scene.getStylesheets().add("css/style.css");
         primaryStage.setScene( scene );
         primaryStage.show();

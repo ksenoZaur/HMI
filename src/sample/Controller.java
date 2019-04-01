@@ -17,8 +17,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
@@ -33,6 +35,11 @@ import java.util.ArrayList;
 public class Controller {
 
     public static Controller self;
+    public ScrollPane dog;
+    public AnchorPane cat;
+    public TextField itogoMain;
+    public HBox hboxTest;
+    public TextField itogo1;
     private Document document;
     public static Stage stage;
 
@@ -85,40 +92,27 @@ public class Controller {
     @FXML
     void initialize() {
 
-
         for(NotationMinTable current: this.document.getNotationMinTables() ) {
             this.minTable.getItems().add( current );
         }
 
         this.itogo.setText( String.valueOf( 0.0 ));
+        this.itogo1.setText( String.valueOf( 0.0 ));
         this.document.setItogo(0.0);
 
-        this.minTable.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> source, Number oldWidth, Number newWidth)
-            {
-                TableHeaderRow header = (TableHeaderRow) minTable.lookup("TableHeaderRow");
-                header.reorderingProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        header.setReordering(false);
-                    }
-                });
-            }
+        this.minTable.widthProperty().addListener((source, oldWidth, newWidth) ->   {
+            TableHeaderRow header = (TableHeaderRow) minTable.lookup("TableHeaderRow");
+            header.reorderingProperty().addListener((observable, oldValue, newValue) -> header.setReordering(false));
         });
 
-        this.table.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> source, Number oldWidth, Number newWidth)
-            {
-                TableHeaderRow header = (TableHeaderRow) table.lookup("TableHeaderRow");
-                header.reorderingProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        header.setReordering(false);
-                    }
-                });
-            }
+        this.table.widthProperty().addListener((source, oldWidth, newWidth) -> {
+            TableHeaderRow header = (TableHeaderRow) table.lookup("TableHeaderRow");
+            header.reorderingProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    header.setReordering(false);
+                }
+            });
         });
 
         this.minTableCol1.setCellValueFactory(new PropertyValueFactory<>("numberOfDishes"));
@@ -132,8 +126,8 @@ public class Controller {
 
             NotationMinTable notMin = event.getTableView().getItems().get(row);
             notMin.setNumberOfDishes( numberOfDishes );
-
             this.setTotalPrice( row );
+            this.setItogoBlud();
         });
 
         this.minTableCol2.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
@@ -144,9 +138,9 @@ public class Controller {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue,
                                 String newValue) {
-                if (!newValue.matches("\\d*")) {
-                    numberVedomosti.setText(newValue.replaceAll("[^\\d]", ""));
-                }
+//                if (!newValue.matches("\\d*")) {
+//                    numberVedomosti.setText(newValue.replaceAll("[^\\d]", ""));
+//                }
             }
         });
 
@@ -253,10 +247,17 @@ public class Controller {
 
         }
 
+        Double test = 1.0;
+        Double test2;
+
         // ==== NUMBER (TEXT FIELD) ===
         this.numCol.setCellValueFactory(new PropertyValueFactory<>("number"));
         this.numCol.setCellFactory(TextFieldTableCell.<Notation, Integer>forTableColumn(new IntegerStringConverter()));
 
+        test2 = 1/12.0;
+        test -= test2;
+
+        this.numCol.prefWidthProperty().bind(this.table.widthProperty().multiply(test2));
 
         // ==== TITLE (COMBO BOX) ===
         ObservableList<String> titleList = FXCollections.observableArrayList(Notation.codeList().keySet());
@@ -298,13 +299,25 @@ public class Controller {
             }
         });
 
+        test2 = 2/12.0;
+        test -= test2;
+
+        this.titleCol.prefWidthProperty().bind(this.table.widthProperty().multiply(test2));
+
         // ==== CODE (TEXT FIELD) ===
         this.codeCol.setCellValueFactory( new PropertyValueFactory<>("code"));
         this.codeCol.setCellFactory( TextFieldTableCell.<Notation>forTableColumn()  );
         this.codeCol.setEditable( false );
 
+        test2 = 1/12.0;
+        test -= test2;
+
+        this.codeCol.prefWidthProperty().bind(this.table.widthProperty().multiply(test2));
+//        this.titleCol.setMaxWidth(this.table.getWidth() * (1/12.0));
+
         // TODO Сделать проверку на ввод не денежной суммы ( формат //d*.//d{2} );
         //  Применение не только по нажатию Enter
+
 
         // ==== BALANCE1 (TEXT FIELD) ===
         this.balanceCol1.setCellValueFactory(new PropertyValueFactory<>("balanceStart"));
@@ -318,7 +331,21 @@ public class Controller {
             Notation doc = event.getTableView().getItems().get(row);
 
             doc.setBalanceStart( newStartBalance );
+
+            if( doc.getBalanceStart() != null &&  doc.getArrived() != null && doc.getBalanceEnd() != null){
+
+                this.table.getItems().get( row ).setUse(
+                        this.setLastColumn( doc.getBalanceStart(), doc.getArrived(),doc.getBalanceEnd() ));
+                setItogoMain();
+                this.table.refresh();
+
+            }
         });
+
+        test2 = 2/12.0;
+        test -= test2;
+
+        this.balanceCol1.prefWidthProperty().bind(this.table.widthProperty().multiply(test2));
 
         // ==== BALANCE2 (TEXT FIELD) ===
         this.balanceCol2.setCellValueFactory(new PropertyValueFactory<>("balanceEnd"));
@@ -331,8 +358,21 @@ public class Controller {
             Notation doc = event.getTableView().getItems().get(row);
             doc.setBalanceEnd( newEndBalance );
 
+            if( doc.getBalanceStart() != null &&  doc.getArrived() != null && doc.getBalanceEnd() != null){
+
+                this.table.getItems().get( row ).setUse(
+                        this.setLastColumn( doc.getBalanceStart(), doc.getArrived(),doc.getBalanceEnd() ));
+                setItogoMain();
+                this.table.refresh();
+
+            }
+
         });
 
+        test2 = 2/12.0;
+        test -= test2;
+
+        this.balanceCol2.prefWidthProperty().bind(this.table.widthProperty().multiply(test2));
 
         // ==== ARRIVED (TEXT FIELD) ===
         this.postupiloCol.setCellValueFactory(new PropertyValueFactory<>("arrived"));
@@ -345,13 +385,25 @@ public class Controller {
             Notation doc = event.getTableView().getItems().get(row);
             doc.setArrived( newArrived );
 
+            if( doc.getBalanceStart() != null &&  doc.getArrived() != null && doc.getBalanceEnd() != null){
+
+                this.table.getItems().get( row ).setUse(
+                        this.setLastColumn( doc.getBalanceStart(), doc.getArrived(),doc.getBalanceEnd() ));
+                setItogoMain();
+                this.table.refresh();
+
+            }
+
         });
+
+        test2 = 2/12.0;
+        test -= test2;
+
+        this.postupiloCol.prefWidthProperty().bind(this.table.widthProperty().multiply(test2));
 
         // ==== USE (TEXT FIELD) ===
         this.costsCol.setCellValueFactory(new PropertyValueFactory<>("use"));
-
         this.costsCol.setCellFactory(TextFieldTableCell.<Notation, Double>forTableColumn(new DoubleStringConverter()));
-
         this.costsCol.setOnEditCommit((TableColumn.CellEditEvent<Notation, Double> event) -> {
 
             TablePosition<Notation, Double> pos = event.getTablePosition();
@@ -362,6 +414,11 @@ public class Controller {
 
         });
 
+
+        test2 = Math.max(test, 2/12.0) - 0.0025;
+
+        this.costsCol.prefWidthProperty().bind(this.table.widthProperty().multiply(test2));
+        this.itogoMain.prefWidthProperty().bind(this.table.widthProperty().multiply(test2));
         this.addNewLine();
     }
 
@@ -388,10 +445,17 @@ public class Controller {
 
 
         Stage responsiblePerson = new Stage();
+            responsiblePerson.setOnCloseRequest(event -> {
+                Controller.self.getDocumnet().setFio1( null );
+                Controller.self.getDocumnet().setFio2( null );
+                Controller.self.getDocumnet().setPosition( null );
+
+                stage.close();
+            });
 
         Controller.stage = responsiblePerson;
 
-        responsiblePerson.setOnCloseRequest(e->e.consume());
+//        responsiblePerson.setOnCloseRequest(e->e.consume());
 
         // Set position of second window, related to primary window.
         responsiblePerson.setX(Main.primary.getX() + 200);
@@ -438,7 +502,7 @@ public class Controller {
 
     private void addNewLine() {
 
-        if(  Notation.counter == 0 ){
+        if(  Notation.counter == 1 ){
 
             Notation notation = new Notation(Notation.counter++);
             this.document.add( notation );
@@ -552,9 +616,7 @@ public class Controller {
     public void controlAction(ActionEvent actionEvent) {
 
         this.control.setText( String.valueOf( (Double.valueOf( control.getText() ) * 100 ) / 100 ));
-
         this.document.setControl( Double.valueOf( this.control.getText() ) );
-
         setNedorashod();
     }
 
@@ -570,5 +632,38 @@ public class Controller {
         } catch ( Exception ex) {
             System.out.println("Ошибка!");
         }
+    }
+
+
+    public double setLastColumn(double start, double add, double end){
+        return start + add - end;
+    }
+
+    public void setItogoMain(){
+
+        double total = 0.0;
+
+        for( Notation notation: this.table.getItems()) {
+            if( notation.getUse() != null ) {
+                total += notation.getUse();
+            }
+        }
+
+        this.itogoMain.setText( String.valueOf( total ));
+        this.control.setText( String.valueOf( total ));
+        this.controlAction( new ActionEvent());
+    }
+
+    public void itogoMainAction(ActionEvent actionEvent) {}
+
+    public void setItogoBlud(){
+
+        Double totalBlud = 0.0;
+        for( NotationMinTable notationMinTable: this.minTable.getItems()){
+            totalBlud += notationMinTable.getNumberOfDishes();
+        }
+
+        this.itogo1.setText( String.valueOf( totalBlud ));
+        this.document.setItogoBlud( totalBlud );
     }
 }

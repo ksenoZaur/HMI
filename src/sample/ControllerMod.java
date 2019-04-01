@@ -7,7 +7,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import org.apache.poi.ss.formula.udf.UDFFinder;
 
 import java.io.*;
 
@@ -40,7 +39,7 @@ public class ControllerMod {
      *  При закрытии сбрасываются значения полей формы и обьекта.
      */
     @FXML
-    void abbortAction(ActionEvent event) {
+    public void abbortAction(ActionEvent event) {
 
         //TODO Обдумать мозможность и целесообразность сохранения значения полей
         Controller.self.getDocumnet().setFio1( null );
@@ -72,7 +71,7 @@ public class ControllerMod {
 
     private File createFile(File dir) {
 
-        File newFile = new File(dir.getPath().concat("\\чOP_13.XLS"));
+        File newFile = new File(dir.getPath().concat("\\OP_13.XLS"));
         InputStream is = null;
         OutputStream os = null;
         try {

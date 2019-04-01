@@ -1,7 +1,6 @@
 package sample;
 
 import java.io.*;
-import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -22,7 +21,7 @@ public class Notation {
 
     private static final String path = "src/directory/position";
 
-    public static int counter = 0;
+    public static int counter = 1;
 
     private static HashMap<String, String> codeList;
 

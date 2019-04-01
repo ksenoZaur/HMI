@@ -5,7 +5,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.io.*;
-import java.util.HashMap;
 
 public class UpdateExcelDemo {
 
@@ -24,7 +23,7 @@ public class UpdateExcelDemo {
 
         try {
 
-            FileInputStream inputStream = new FileInputStream( this.resultFile );
+            FileInputStream inputStream = new FileInputStream( this.file );
 
             // Get the workbook instance for XLS file
             HSSFWorkbook workbook = new HSSFWorkbook(inputStream);
@@ -118,6 +117,13 @@ public class UpdateExcelDemo {
                 cell.setCellValue( coast[ 1 ] );
             }
 
+            if( this.document.getItogoBlud() != null ){
+
+                cell = sheet.getRow(44).getCell(30);
+                cell.setCellValue(  this.document.getItogoBlud() );
+
+            }
+
             if( this.document.getItogo() != null ){
 
                 cell = sheet.getRow(44).getCell(37);
@@ -130,9 +136,15 @@ public class UpdateExcelDemo {
                 cell = sheet.getRow(45).getCell(37);
                 cell.setCellValue(  this.document.getControl() );
 
+                cell = sheet.getRow(31).getCell(44);
+                cell.setCellValue(  this.document.getControl() );
+
+
             }
 
-            if( this.document.getControl() != null ){
+
+
+            if( this.document.getSumma() != null ){
 
                 cell = sheet.getRow(46).getCell(37);
                 cell.setCellValue(  this.document.getSumma() );
@@ -232,7 +244,7 @@ public class UpdateExcelDemo {
             inputStream.close();
 
             // Write File
-            FileOutputStream out = new FileOutputStream(file);
+            FileOutputStream out = new FileOutputStream(this.resultFile);
             workbook.write(out);
             out.close();
 
